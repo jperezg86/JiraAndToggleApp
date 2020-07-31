@@ -7,7 +7,10 @@
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "start-server": "ts-node-dev --respawn NodeServer/index.ts",
+    "start-server-dev" : "nodemon --exec ts-node NodeServer/index.ts",
+    "build-server": "tsc NodeServer/index.ts"
   },
   "private": true,
   "dependencies": {
@@ -19,6 +22,8 @@
     "@angular/platform-browser": "~10.0.3",
     "@angular/platform-browser-dynamic": "~10.0.3",
     "@angular/router": "~10.0.3",
+    "express": "^4.17.1",
+    "jira-client": "^6.18.0",
     "rxjs": "~6.5.5",
     "tslib": "^2.0.0",
     "zone.js": "~0.10.3"
@@ -27,9 +32,9 @@
     "@angular-devkit/build-angular": "~0.1000.2",
     "@angular/cli": "~10.0.2",
     "@angular/compiler-cli": "~10.0.3",
-    "@types/node": "^12.11.1",
     "@types/jasmine": "~3.5.0",
     "@types/jasminewd2": "~2.0.3",
+    "@types/node": "^12.11.1",
     "codelyzer": "^6.0.0",
     "jasmine-core": "~3.5.0",
     "jasmine-spec-reporter": "~5.0.0",
@@ -39,7 +44,8 @@
     "karma-jasmine": "~3.3.0",
     "karma-jasmine-html-reporter": "^1.5.0",
     "protractor": "~7.0.0",
-    "ts-node": "~8.3.0",
+    "ts-node": "^8.3.0",
+    "ts-node-dev": "^1.0.0-pre.56",
     "tslint": "~6.1.0",
     "typescript": "~3.9.5"
   }
