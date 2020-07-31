@@ -3,6 +3,7 @@ import * as bodyParser from 'body-parser';
 import * as cors from 'cors';
 import JiraController from './controllers/jira-controller';
 import * as dotEnv from 'dotenv';
+import ToggleController from './controllers/toggl-controller';
 
 const result = dotEnv.config();
 if(result.error) {
@@ -12,7 +13,8 @@ if(result.error) {
 const app = new App({
     port : 3000,
     controllers : [
-        new JiraController()
+        JiraController.getInstance(),
+        ToggleController.getInstance()
     ],
     middleWares : [
         bodyParser.json(),
