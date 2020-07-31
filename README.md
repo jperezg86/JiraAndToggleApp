@@ -1,3 +1,16 @@
+# SettingUP 
+Before you try to run anything you must start by configuring an .env file (not included in the repository) in the root directory of your application 
+You .env file should contain the next variables: 
+
+```bash
+JIRA_API_KEY = //the JIRA api key
+TOGGL_API_KEY = //the toggl api key
+```
+
+
+You can configure a JIRA_API_KEY [here](http)
+
+
 # JiraAndToggleApp
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 10.0.2.
