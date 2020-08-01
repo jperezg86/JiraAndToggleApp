@@ -5,6 +5,7 @@ import * as JiraAPI from 'jira-client';
 import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
 import JiraIssue from '../models/jira-issue';
+import Project from "../models/jira-project";
 
 
 export default class JiraController implements IControllerBase {
@@ -80,35 +81,18 @@ export default class JiraController implements IControllerBase {
 
     private getProjectDetailsReq = (req : Request, resp : Response) => {
         this.getIssuesByProjectId(req.params.projectId).pipe(
-            map( value => {
-                let arr = [];
-                value.forEach( (jiraResponseAPI) => {
-                    arr.push(new JiraIssue(jiraResponseAPI));
-                });
-                return arr;
+            map( issues => {
+                let project = (issues.length > 0) ? new Project(issues[0].fields.project) : null;
+                if(project) {
+                    issues.forEach( (jiraResponseAPI) => {
+                        project.jiraIssues.push(new JiraIssue(jiraResponseAPI));
+                    });
+                }
+                
+                return project;
             })
-            // map((value) => {
-                // let newArray = [];
-                // value.foreach( (item) => {
-                //     let categoryStatus : string = "";
-                //     let assigne : string = "";
-                //     if(item.fields.status) { 
-                //         categoryStatus = item.fields.status.statusCategory.name;
-                //     }  
-
-                //     if(item.fields.assigne) {
-                //         assigne = item.fields.assigne.displayName;
-                //     }
-
-                //     let jiraIssue : JiraIssue = new JiraIssue(
-                //         item.fields.id,item.key,
-                //         categoryStatus,assigne,item.fields.summary,0,0);
-                //         newArray.push(jiraIssue);
-                //     });
-                // return newArray;
-            // })
         ).subscribe( {
-            next : (response : JiraIssue[]) => {
+            next : (response : Project) => {
                 resp.send(response);
             },
             error : (error) => {
