@@ -13,7 +13,7 @@ TOGGL_API_KEY = 123456789
 ```
 
 
-You can configure a JIRA_API_KEY [here](http) (You should be logged in on Jira)
+You can configure a JIRA_API_KEY [here](https://id.atlassian.com/manage-profile/security/api-tokens) (You should be logged in on Jira)
 
 To get your toggl API_KEY you should enter to your account settings and there you have.
 

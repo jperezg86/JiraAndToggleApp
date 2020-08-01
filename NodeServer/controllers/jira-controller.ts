@@ -3,6 +3,8 @@ import * as express from 'express';
 import { Request, Response } from 'express';
 import * as JiraAPI from 'jira-client';
 import { Observable } from "rxjs";
+import { map } from "rxjs/operators";
+import JiraIssue from '../models/jira-issue';
 
 
 export default class JiraController implements IControllerBase {
@@ -36,6 +38,7 @@ export default class JiraController implements IControllerBase {
         this.router.get(this.path + "/getProjects/:boardId", this.getProjects);
         this.router.get(this.path + "/getIssuesByBoard/:boardId",this.getIssuesByBoard);
         this.router.get(this.path + "/getIssuesByProjectId/:projectId", this.getIssuesByProjectIdReq);
+        this.router.get(this.path + "/getProjectDetails/:projectId", this.getProjectDetailsReq);
     }
 
     private getBoards = (req : Request, resp : Response) => {
@@ -75,6 +78,45 @@ export default class JiraController implements IControllerBase {
         );
     }
 
+    private getProjectDetailsReq = (req : Request, resp : Response) => {
+        this.getIssuesByProjectId(req.params.projectId).pipe(
+            map( value => {
+                let arr = [];
+                value.forEach( (jiraResponseAPI) => {
+                    arr.push(new JiraIssue(jiraResponseAPI));
+                });
+                return arr;
+            })
+            // map((value) => {
+                // let newArray = [];
+                // value.foreach( (item) => {
+                //     let categoryStatus : string = "";
+                //     let assigne : string = "";
+                //     if(item.fields.status) { 
+                //         categoryStatus = item.fields.status.statusCategory.name;
+                //     }  
+
+                //     if(item.fields.assigne) {
+                //         assigne = item.fields.assigne.displayName;
+                //     }
+
+                //     let jiraIssue : JiraIssue = new JiraIssue(
+                //         item.fields.id,item.key,
+                //         categoryStatus,assigne,item.fields.summary,0,0);
+                //         newArray.push(jiraIssue);
+                //     });
+                // return newArray;
+            // })
+        ).subscribe( {
+            next : (response : JiraIssue[]) => {
+                resp.send(response);
+            },
+            error : (error) => {
+                resp.send(error);
+            }
+        } );
+    }
+
     public getIssuesForBoard(boardId : number) : Observable<any> {
         return new Observable((subscriber)=> {
             this.jira.getIssuesForBoard(boardId).then((success)=> {
@@ -89,7 +131,7 @@ export default class JiraController implements IControllerBase {
     public getIssuesByProjectId(projectId : any) : Observable<any> {
         return new Observable((subscriber)=> {
             this.jira.searchJira(`project=${projectId}`).then((success)=> {
-                subscriber.next(success);
+                subscriber.next(success.issues);
             },
             (error)=> {
                 subscriber.error(error);

@@ -15,7 +15,7 @@ export default class ToggleController implements IControllerBase {
     
     initRoutes() {
         this.router.get(`${this.path}/`,this.home);
-        this.router.get(`${this.path}/getTimeEntries/:projectKey`,this.getTimeEntriesByProjectKeyReq);
+        this.router.get(`${this.path}/getTimeEntries/:issueKey`,this.getTimeEntriesByProjectKeyReq);
     }
 
     private constructor() {
@@ -34,15 +34,17 @@ export default class ToggleController implements IControllerBase {
     };
 
     private getTimeEntriesByProjectKeyReq  = async (req: Request, resp : Response) => {
-        // let timeEntriesMatch = this.getTi
-        // resp.
-        const matchEntries = this.getTimeEntries().subscribe( (success) => {
-            const results = success.filter((value) => {
-                 if(value.description) {
-                    return value.description.includes(req.params.projectKey);
-                 }
+        const matchEntries = this.getTimeEntries()
+        .pipe( 
+            map( (data) => {
+               return data.filter((value) => {
+                    if(value.description) {
+                        return value.description.includes(req.params.issueKey);
+                    }
+                })
             })
-            resp.send(results);
+        ).subscribe( (success) => {
+            resp.send(success);
         },(error)=> {
             resp.send(error);
         })
@@ -56,7 +58,9 @@ export default class ToggleController implements IControllerBase {
         return ToggleController.instance;
     }
 
-    public getTimeEntries() : Observable<TimeEntry[]> {
+    
+
+    public getTimeEntries() : Observable<any[]> {
         return new Observable( (observer)=> {
             axios.get("https://www.toggl.com/api/v8/me", {
                 params : {
