@@ -3,21 +3,27 @@ export default interface ITimeEntry {
     desc: string,
     start: string,
     stop: string,
-    duration: string,
+    duration: number,
     durationMillSeconds: number,
-    tags : string[], 
+    tags? : string[], 
     category: string
 }
 
 export default class TimeEntry implements ITimeEntry {
+    public durationMillSeconds : number = 0; 
+    public category : string = "";
     constructor (
        public id: number,
        public desc: string,
        public start: string,
        public stop: string,
-       public duration: string,
-       public durationMillSeconds: number,
-       public tags : string[], 
-       public category: string
-    ) {}
+       public duration: number,
+       public tags? : string[], 
+    ) {
+        if(!tags) {
+            this.tags = [];
+        }
+
+        this.durationMillSeconds = this.duration * 1000;
+    }
 }

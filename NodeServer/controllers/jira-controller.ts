@@ -6,6 +6,8 @@ import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
 import JiraIssue from '../models/jira-issue';
 import Project from "../models/jira-project";
+import ToggleController from "./toggl-controller";
+import TimeEntry from '../models/time-entry';
 
 
 export default class JiraController implements IControllerBase {
@@ -88,12 +90,16 @@ export default class JiraController implements IControllerBase {
                         project.jiraIssues.push(new JiraIssue(jiraResponseAPI));
                     });
                 }
-                
                 return project;
             })
         ).subscribe( {
             next : (response : Project) => {
-                resp.send(response);
+                ToggleController.getInstance().getTimeEntries().subscribe((timeEntries : TimeEntry[] ) => {
+                    response.jiraIssues.forEach((issue) => {
+                        issue.setTogglEntries(timeEntries.filter((value : TimeEntry)=> value.desc.includes(issue.key)));
+                    });
+                    resp.send(response);
+                });
             },
             error : (error) => {
                 resp.send(error);

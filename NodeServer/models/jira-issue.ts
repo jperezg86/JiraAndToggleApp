@@ -48,4 +48,16 @@ export default class JiraIssue implements IJiraIssue{
         this.totalDuration = Utils.msToTime(this.totalDurationMillSeconds);
         this.togglEntries = [];
     }
+
+
+    public setTogglEntries ( entries : TimeEntry[]) {
+        this.togglEntries = entries;
+        let totalDuration = 0;
+        entries.forEach(timeEntry => {
+            totalDuration += timeEntry.durationMillSeconds;
+        });
+        this.totalDurationMillSeconds = totalDuration;
+        this.totalDuration = Utils.msToTime(this.totalDurationMillSeconds);
+        // this.totalDurationMillSeconds = ;
+    }
 }

@@ -38,8 +38,8 @@ export default class ToggleController implements IControllerBase {
         .pipe( 
             map( (data) => {
                return data.filter((value) => {
-                    if(value.description) {
-                        return value.description.includes(req.params.issueKey);
+                    if(value.desc) {
+                        return value.desc.includes(req.params.issueKey);
                     }
                 })
             })
@@ -60,7 +60,7 @@ export default class ToggleController implements IControllerBase {
 
     
 
-    public getTimeEntries() : Observable<any[]> {
+    public getTimeEntries() : Observable<TimeEntry[]> {
         return new Observable( (observer)=> {
             axios.get("https://www.toggl.com/api/v8/me", {
                 params : {
@@ -71,7 +71,17 @@ export default class ToggleController implements IControllerBase {
                     password : "api_token"
                 }
             }).then(
-                (success) => observer.next(success.data.data.time_entries),
+                (success) => {
+                    let toReturn : TimeEntry[] = [];
+                    success.data.data.time_entries.forEach((item)=> {
+                        let timeEntry = new TimeEntry(item.id,item.description,item.start,item.stop,item.duration);
+                        if(item.tags) {
+                            timeEntry.tags = item.tags;
+                        }
+                        toReturn.push(timeEntry);
+                    });
+                    observer.next(toReturn);
+                },
                 (fail) => observer.error(fail),
             );
         });
