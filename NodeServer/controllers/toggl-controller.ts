@@ -77,6 +77,7 @@ export default class ToggleController implements IControllerBase {
                         let timeEntry = new TimeEntry(item.id,item.description,item.start,item.stop,item.duration);
                         if(item.tags) {
                             timeEntry.tags = item.tags;
+                            timeEntry.assignCategory();
                         }
                         toReturn.push(timeEntry);
                     });
